@@ -18,3 +18,12 @@ BRONZE_CHECKPOINT = str(CHECKPOINT_DIR / "bronze")
 BRONZE_TRIGGER = os.getenv("BRONZE_TRIGGER", "30 seconds")
 # Caps how much one micro-batch may read, so a long outage can't create a giant first batch
 MAX_OFFSETS_PER_TRIGGER = int(os.getenv("MAX_OFFSETS_PER_TRIGGER", "10000"))
+
+SILVER_PATH = str(DATA_DIR / "delta" / "silver" / "wiki_events")
+QUARANTINE_PATH = str(DATA_DIR / "delta" / "quarantine" / "wiki_events")
+SILVER_CHECKPOINT = str(CHECKPOINT_DIR / "silver")
+QUARANTINE_CHECKPOINT = str(CHECKPOINT_DIR / "quarantine")
+
+SILVER_TRIGGER = os.getenv("SILVER_TRIGGER", "30 seconds")
+SILVER_MAX_FILES = int(os.getenv("SILVER_MAX_FILES", "500"))   # caps files read per batch
+DEDUPE_WATERMARK = os.getenv("DEDUPE_WATERMARK", "10 minutes")
