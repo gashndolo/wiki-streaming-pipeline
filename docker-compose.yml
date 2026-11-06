@@ -1,3 +1,8 @@
+
+x-app: &app
+  build: .
+  image: wiki-pipeline:local
+  restart: unless-stopped
 services:
   kafka:
     image: apache/kafka:4.3.0
@@ -60,6 +65,45 @@ services:
       KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:19092
       DYNAMIC_CONFIG_ENABLED: "false"
     restart: unless-stopped
+  producer:
+    <<: *app
+    profiles: ["app"]
+    command: ["python", "-m", "producer.run"]
+    environment:
+      KAFKA_BOOTSTRAP: kafka:19092
+      WIKI_USER_AGENT: ${WIKI_USER_AGENT:?set WIKI_USER_AGENT in .env}
+    depends_on:
+      kafka-init:
+        condition: service_completed_successfully
+
+  pipeline:
+    <<: *app
+    profiles: ["app"]
+    command: ["python", "-m", "spark_jobs.pipeline"]
+    environment:
+      KAFKA_BOOTSTRAP: kafka:19092
+      PIPELINE_MEMORY: 2g
+      MAX_OFFSETS_PER_TRIGGER: "50000"
+    volumes:
+      - lake-data:/app/data
+      - lake-checkpoints:/app/checkpoints
+      - ivy-cache:/home/app/.ivy2
+    depends_on:
+      kafka-init:
+        condition: service_completed_successfully
+
+  dashboard:
+    <<: *app
+    profiles: ["app"]
+    command: ["python", "-m", "streamlit", "run", "dashboard/app.py",
+              "--server.port=8501", "--server.address=0.0.0.0", "--server.headless=true"]
+    ports:
+      - "8501:8501"
+    volumes:
+      - lake-data:/app/data
 
 volumes:
   kafka-data:
+  lake-data:
+  lake-checkpoints:
+  ivy-cache:
