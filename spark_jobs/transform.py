@@ -17,7 +17,9 @@ def parse_events(bronze: DataFrame) -> DataFrame:
     ).withColumn("event_time", F.timestamp_seconds(F.col("e.timestamp")))
 
     error = (
-        F.when(F.col("e").isNull(), F.lit("unparseable_json"))
+        F.when(F.col("raw_json").isNull()
+               | F.get_json_object("raw_json", "$").isNull(), F.lit("unparseable_json"))
+        .when(F.col("e").isNull(), F.lit("unparseable_json"))
         .when(F.col("e.meta.id").isNull(), F.lit("missing_event_id"))
         .when(F.col("e.wiki").isNull(), F.lit("missing_wiki"))
         .when(F.col("e.type").isNull(), F.lit("missing_type"))
