@@ -3,7 +3,7 @@ from delta import configure_spark_with_delta_pip
 from pyspark.sql import SparkSession
 
 
-def get_spark(app_name: str, driver_memory: str = "2g") -> SparkSession:
+def get_spark(app_name: str, driver_memory: str = "2g", cores: int = 2) -> SparkSession:
     # Kafka connector version must match the Spark version exactly
     kafka_pkg = f"org.apache.spark:spark-sql-kafka-0-10_2.13:{pyspark.__version__}"
 

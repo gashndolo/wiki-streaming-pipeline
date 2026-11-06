@@ -27,3 +27,15 @@ QUARANTINE_CHECKPOINT = str(CHECKPOINT_DIR / "quarantine")
 SILVER_TRIGGER = os.getenv("SILVER_TRIGGER", "30 seconds")
 SILVER_MAX_FILES = int(os.getenv("SILVER_MAX_FILES", "500"))   # caps files read per batch
 DEDUPE_WATERMARK = os.getenv("DEDUPE_WATERMARK", "10 minutes")
+
+TEST_WIKI = "pipeline_test"     # injected test events are excluded from gold
+
+GOLD_MINUTE_PATH = str(DATA_DIR / "delta" / "gold" / "edits_per_minute")
+GOLD_PAGE_PATH = str(DATA_DIR / "delta" / "gold" / "edits_by_page_5min")
+GOLD_MINUTE_CHECKPOINT = str(CHECKPOINT_DIR / "gold_minute")
+GOLD_PAGE_CHECKPOINT = str(CHECKPOINT_DIR / "gold_page")
+
+GOLD_TRIGGER = os.getenv("GOLD_TRIGGER", "30 seconds")
+GOLD_MAX_FILES = int(os.getenv("GOLD_MAX_FILES", "500"))
+GOLD_WATERMARK = os.getenv("GOLD_WATERMARK", "5 minutes")
+PIPELINE_MEMORY = os.getenv("PIPELINE_MEMORY", "3g")
